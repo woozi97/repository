@@ -32,7 +32,7 @@ import com.naver.myhome5.service.CommentService;
 //적용순서 1. 컨트롤러 2. 서비스impl 3.DAO 4.mapper.xml
 
 //컨트롤러가 서블릿과 액션기능을 하는듯(DAO호출 빼고)
-//DAO도 요청하고 보내는 경로까지 있는경우 ModelAndView로 만드는듯
+//DAO도 요청하고 보내는 경로까지 있는경우 ModelAndView로 만드는듯//
 @Controller
 public class BoardController {
 	@Autowired
