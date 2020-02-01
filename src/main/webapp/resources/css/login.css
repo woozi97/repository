@@ -1,0 +1,3 @@
+@charset "EUC-KR";
+button[type=submit]{background:lightgreen;}
+button[type="button"]{background:pink}

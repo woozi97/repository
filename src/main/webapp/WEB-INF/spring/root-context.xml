@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 컨테이너의 부모에 해당하는 애가 만들어짐 DAO관련 mybatis관련 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<!-- 시험 이거 의미 -->
+		<bean class="org.apache.commons.dbcp.BasicDataSource"
+			id="dataSource" destroy-method="close">
+			<property name ="driverClassName"
+				value="oracle.jdbc.driver.OracleDriver"/>
+			<property name="url"
+				value="jdbc:oracle:thin:@localhost:1521:xe"/>
+			<property name="username" value="SCOTT"/>
+			<property name="password" value="TIGER"/>
+		</bean>
+			
+		<bean class="org.mybatis.spring.SqlSessionFactoryBean"
+				id="sqlSessionFactory">
+			<property ref="dataSource" name="dataSource"/> <!-- 위에거를 참조함 -->
+			<property name="configLocation"
+				value="classpath:util/SqlMapConfig.xml"/> <!-- mybatis에서 했던 환경설정 xml읽어오는것 여기서 대신해줌 -->
+		</bean>
+		
+		<!-- SqlSessionTemplate은 마이바티스 스프링 연동 모듈의 핵심이다.
+			SqlSessionTemplate은 SqlSession을
+			구현하고 코드에서 SqlSession을 대체하는 역할을 한다.
+			SqlSessionTemplate은 쓰레드에 안전하고 여러개의 DAO나
+			매퍼에서 공유할 수 있고 필요한 시점에 세션을 닫고 커밋하거나 롤백하는것을
+			포함한 세션의 생명주기를 관리한다.
+		 -->
+		 <bean class="org.mybatis.spring.SqlSessionTemplate"
+		 	id="sqlSessionTemplate">
+		 	<constructor-arg ref="sqlSessionFactory" index="0"/> <!-- 위에꺼를 참조하는 관계 -->	
+		 </bean>
+		 
+		 <!-- 트랜잭션 처리 -->
+		 <bean id="transactionManager"
+		 	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		 	<constructor-arg ref="dataSource"/>
+		 </bean>
+		 
+		 <!-- 빈의 이름이 정해져 있습니다. -->
+		 <!-- 파일 업로드 설정 id 값 꼭 일치 시켜야 합니다.
+		 id 값을 다르게 사용하면 public String bbs_write_ok(BbsBean bbsbean)
+		 throws Exception{MultipartFile uploadfile=bbsbean.get} -->
+		 <!-- 아래 아이디는 고정되어 있음 -->
+		 <bean id="multipartResolver"
+		 	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		 	<!-- 1024*1024*10bytes : 10MB -->
+		 	<property name="maxUploadSize" value="10485760"/>
+		 </bean>
+		 <!-- maxUploadSize : 한 번의 Request로 전달될 수 있는 최대의 크기를 의미합니다.
+		 name="maxUploadSize"를 지정하지 않으면
+		 기본으로 "-1"이 설정되는데 파일 크기가 무제한이라는 의미입니다.
+		  -->
+		  
+		  <!-- 프로퍼티 파일을 이용하여 값을 주입하는 방법
+		  <util:properties>를 이용해서 properties 타입의 빈으로 만듭니다., 아래 네임스페이스에서 util사용 해준다. -->
+		  <util:properties id="mailinfo" location="classpath:pro/mail.properties"/>
+		  
+		  <!-- ${mailinfo['id']} mailinfo 빈에서 키(id)의 값을 가져옵니다. -->
+		  <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		  	<!-- 이렇게 property로 적는건 setHost, setPort 등이 있다는것 -->
+		  	<property name="host" value="smtp.naver.com"/>
+		  	<!-- 네이버메일 포트번호 -->
+		  	<property name="port" value="587"/>
+		  	
+		  	
+		  	<property name="username" value="#{mailinfo['id']}"/>
+		  	<property name="password" value="#{mailinfo['password']}"/>
+		  	<property name="javaMailProperties">
+		  		<props><prop key="mail.smtp.auth">true</prop>
+		  		</props>
+		  	</property>
+		  	
+		  </bean>
+		  
+		  
+</beans>

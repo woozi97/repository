@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Comments">
+	<select id="count" resultType="int" parameterType="int"> <!-- 기본 자료형일때는 #{아무변수명}이 들어가면 되고 파라미터 타입이 VO면 해당 프로퍼티를 맞게 넣는다. -->
+		select count(*)
+		from comments
+		where BOARD_RE_REF =#{board_re_ref}
+	</select>
+
+	<!-- insert는 resultType이 없다. 파라미터타입C는 SqlMapConfig에 Comment를 C별칭으로 부르겠다고 
+		적었기 때문에 적을 수 있음 -->
+	<insert id="insert" parameterType="C">
+		insert into comments
+		(num, id, content, reg_date, BOARD_RE_REF)
+		values (com_seq.nextval,#{id},#{content},sysdate,#{BOARD_RE_REF})
+	</insert>
+	<select id="getList" parameterType="int" resultType="C">
+		select num, id, content, reg_date
+		from comments where board_re_ref=#{num}
+		order by reg_date desc
+	</select>
+	<update id="update" parameterType="C">
+	update comments set content=#{content} where num=#{num}
+	</update>
+	<delete id="delete" parameterType="int">
+	delete comments where num=#{num}
+	</delete>
+
+</mapper>

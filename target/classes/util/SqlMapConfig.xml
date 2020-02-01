@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ <!-- 데이터빈을 별칭 쓸거라고 기재 -->
+<configuration>
+	<typeAliases>
+		<typeAlias alias="member" type="com.naver.myhome5.domain.Member"/>
+		<typeAlias alias="board" type="com.naver.myhome5.domain.Board"/>
+		<typeAlias alias="C" type="com.naver.myhome5.domain.Comment"/> 
+	</typeAliases>
+
+<!-- 맵퍼이기 때문에 안에 내용에 맵퍼 정의가 되어있어야 한다. -->
+<mappers>
+	<mapper resource="sql/member.xml"/>
+	<mapper resource="sql/board.xml"/>
+	<mapper resource="sql/comment.xml"/>
+</mappers>
+
+</configuration>
+
